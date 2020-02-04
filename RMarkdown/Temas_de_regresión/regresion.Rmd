@@ -1,0 +1,49 @@
+---
+title: "Regresión lineal y logística"
+output: 
+  revealjs::revealjs_presentation:
+    center: true
+    incremental: true
+    css: www/customCSS.css
+---
+
+# __Un poco de notación__
+
+- $x^{(i)}$: el conjunto de inputs (variables explicativas)
+- $y^{(i)}$: es la variable de output/salida (variable dependiente) que queremos predecir (ajustar)
+- La pareja $(x^{(i)},y^{(i)})$ le llamaremos ejemplo de entrenamiento
+- El conjunto de entrenamiento se denota por: $\{(x^{(i)},y^{(i)})|i\in N\}$
+- De forma general, denotaremos por $\mathcal{X}$ al espacio de inputs y por $\mathcal{Y}$ al espacio de outputs
+ 
+# __Entrenamiento de modelos__ {.justificado}
+
+Dado un conjunto de entrenamiento $(x^{(i)},y^{(i)})\in(\mathcal{X} \times \mathcal{Y})$ el objetivo es "aprender" (ajustar) una función $h:\mathcal{X}\rightarrow \mathcal{Y}$ tal que $h(x)$ sea un "buen predictor" de $y$.
+
+La función $h$ suele llamarse "hipótesis".
+
+Cuando el conjunto $\mathcal{Y}$ es continuo, estamos frente a un problema de regresión. Si se trata de un conjunto discreto* entonces tenemos un problema de clasificación.
+
+# __Regresión__
+
+- Es uno de los modelos más populares en ciencia de datos.
+- Tiene una amplia variedad de aplicaciones.
+- La medida de error es la magnitud de la diferencia entre el valor real y el valor ajustado.
+
+# __El algoritmo de regresión lineal__ {.justificado}
+
+Sea $\Phi: \mathcal{X} \rightarrow \mathbb{R}^N$ y consideremos la familia de hipótesis lineales $$H=\{x\mapsto w \cdot \Phi(x)+b | w\in\mathbb{R}^N, b\in\mathbb{R}\}$$
+
+La regresión lineal consiste en buscar la hipótesis $h\in H$ con el menor error cuadrático medio, es decir, se debe resolver el problema de optimización: $$\min_{w,b} \frac{1}{m}\sum_{i=1}^{m}(h(x_i)-y_i)^2$$
+
+## __Regresión lineal "simple__
+
+![](imgs/reg1.png)
+*Cuando $N=1$ el problema consiste en encontrar la mejor linea que ajuste la nube de puntos*
+
+## 
+
+# __Regresión logística__
+
+# __Modelos lineales generalizados__
+
+# __Selección de modelos__
