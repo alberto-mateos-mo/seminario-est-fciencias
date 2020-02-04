@@ -1,6 +1,75 @@
 ---
-title: "(Muy) Breve introducción a shiny"
-output: revealjs::revealjs_presentation
+title: "(Muy) breve introducción a shiny"
+author: 
+- Sofía Villers Gómez
+- David Alberto Mateos Montes de Oca
+output: 
+  revealjs::revealjs_presentation:
+    theme: night
+    center: true
+    incremental: true
 ---
 
 ## ¿Cónocen Shiny?
+
+## ¿Qué es Shiny? 
+
+## {data-background-iframe="https://phillyo.shinyapps.io/intelligentsia/"}
+
+## Algunas cosas sobre Shiny
+
+- Es un marco para crear aplicaciones web usando R.
+- Es relativamente sencillo programar apps.
+- Utiliza programación reactiva.
+
+## Componente de una Shiny App
+
+- Interfaz (ui)
+- Servidor (server)
+
+Podemos encontrarnos con Shiny Apps que tienen un script para cada componente o bien un script para ambas cosas.
+
+## Interfaz (ui)
+
+Es donde la interacción con el usuario ocurre.
+
+## Servidor (server) 
+
+Es donde los cálculos ocurren.
+
+## Creando Shiny Apps con RStudio|
+
+![](imgs/shiny1.png)
+
+## Creando Shiny Apps con RStudio
+
+![](imgs/shiny2.png)
+
+## UI
+
+![](imgs/shiny3.png)
+
+## UI
+
+![](imgs/shiny4.png)
+
+## UI
+
+![](imgs/shiny5.png)
+
+## Tipo de Inputs
+
+![](imgs/shiny6.png)
+
+## Tipo de Outpus
+
+![](imgs/shiny7.png)
+
+## Server
+
+![](imgs/shiny8.png)
+
+## Server
+
+![](imgs/shiny9.png)
+
