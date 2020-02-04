@@ -1,0 +1,6 @@
+---
+title: "(Muy) Breve introducción a shiny"
+output: revealjs::revealjs_presentation
+---
+
+## ¿Cónocen Shiny?
