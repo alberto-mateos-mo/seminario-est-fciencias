@@ -33,14 +33,55 @@ Cuando el conjunto $\mathcal{Y}$ es continuo, estamos frente a un problema de re
 
 Sea $\Phi: \mathcal{X} \rightarrow \mathbb{R}^N$ y consideremos la familia de hipótesis lineales $$H=\{x\mapsto w \cdot \Phi(x)+b | w\in\mathbb{R}^N, b\in\mathbb{R}\}$$
 
-La regresión lineal consiste en buscar la hipótesis $h\in H$ con el menor error cuadrático medio, es decir, se debe resolver el problema de optimización: $$\min_{w,b} \frac{1}{m}\sum_{i=1}^{m}(h(x_i)-y_i)^2$$
+La regresión lineal consiste en buscar la hipótesis $h\in H$ con el menor error cuadrático medio, es decir, se debe resolver el problema de optimización: $$\min \frac{1}{m}\sum_{i=1}^{m}(h(x_i)-y_i)^2$$
 
-## __Regresión lineal "simple__
+## __Regresión lineal "simple"__
 
 ![](imgs/reg1.png)
-*Cuando $N=1$ el problema consiste en encontrar la mejor linea que ajuste la nube de puntos*
+*Cuando $N=1$ el problema consiste en encontrar la mejor linea que ajuste la nube de puntos. (1)*
 
-## 
+## __¿Cómo resolvemos el problema?__
+
+## __Algorítmo LMS (lo resolvemos sin resolverlo)__ {.justificado}
+
+Permítasenos escribir las hipótesis lineales como $h(x)=\textbf{w}^Tx$
+
+Queremos encontrar $\textbf{w}$ tal que minimice $\frac{1}{m}\sum_{i=1}^{m}(h(x_i)-y_i)^2$...(*)
+
+## __Algorítmo LMS__ {.justificado}
+
+El algoritmo empieza adivinando un valor inicial de $\textbf{w}$ que se va actualizando con el objetivo de minimizar (*)
+
+¿Cómo?
+
+$$w_j:=w_j-\alpha\frac{\partial}{\partial w_j}(*)$$
+
+Es decir: $$w_j:=w_j-\alpha(h(x)-y)x_j$$
+
+## __Ecuaciones normales (ahora sí lo resolvemos)__ {.justificado}
+
+En lenguaje matricial nuestro problema de optimización puede escribirse como 
+$$min\ F(W) = \frac{1}{m}\|X^TW-Y\|^2$$
+$F$ es convexa y diferenciable por lo que tiene mínimo global sii $\nabla F(W)=0\ $ i.e.
+$$\frac{2}{m}X(X^TW-Y)=0 \Leftrightarrow XX^TW=XY$$
+
+## __El enfoque probabilístico de siempre__ {.justificado}
+
+Supongamos que la variable ojetivo y las variables explicativas siguen: $$y^{(i)}=\theta^Tx^{(i)}+\epsilon^{(i)}$$
+
+Supongamos que $\epsilon^{(i)}\sim_{iid}N(0,\sigma^2)$ entonces
+$$f(y|x;w)=\frac{1}{\sqrt{2\pi}\sigma}exp(-\frac{(wx-y)^2}{2\sigma^2})$$
+
+Dado X la distribución de y es: $$L(w)=\prod f(y|x:w)$$
+
+## __El enfoque probabilístico de siempre__ {.justificado}
+
+Para escoger $w$ tenemos que hacer que los datos sean tan probables como sea posible, i.e. hay que maximizar $L(w)$ o bien minimizar 
+$$\ell(w) = mlog\frac{1}{\sqrt{2\pi}\sigma}-\frac{1}{\sigma^2}\cdot \frac{1}{2}\sum (wt-y)^2$$
+
+## __Regresiones en R__
+
+
 
 # __Regresión logística__
 
