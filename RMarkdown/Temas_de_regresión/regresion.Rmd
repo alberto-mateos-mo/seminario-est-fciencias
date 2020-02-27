@@ -1,5 +1,5 @@
 ---
-title: "Regresión lineal y logística"
+title: "Regresión"
 output: 
   revealjs::revealjs_presentation:
     center: true
@@ -11,7 +11,7 @@ output:
 
 - $x^{(i)}$: el conjunto de inputs (variables explicativas)
 - $y^{(i)}$: es la variable de output/salida (variable dependiente) que queremos predecir (ajustar)
-- La pareja $(x^{(i)},y^{(i)})$ le llamaremos ejemplo de entrenamiento
+- A la pareja $(x^{(i)},y^{(i)})$ le llamaremos ejemplo de entrenamiento
 - El conjunto de entrenamiento se denota por: $\{(x^{(i)},y^{(i)})|i\in N\}$
 - De forma general, denotaremos por $\mathcal{X}$ al espacio de inputs y por $\mathcal{Y}$ al espacio de outputs
  
@@ -65,7 +65,7 @@ $$min\ F(W) = \frac{1}{m}\|X^TW-Y\|^2$$
 $F$ es convexa y diferenciable por lo que tiene mínimo global sii $\nabla F(W)=0\ $ i.e.
 $$\frac{2}{m}X(X^TW-Y)=0 \Leftrightarrow XX^TW=XY$$
 
-## __El enfoque probabilístico de siempre__ {.justificado}
+## __Nuestro enfoque favorito__ {.justificado}
 
 Supongamos que la variable ojetivo y las variables explicativas siguen: $$y^{(i)}=\theta^Tx^{(i)}+\epsilon^{(i)}$$
 
@@ -74,13 +74,94 @@ $$f(y|x;w)=\frac{1}{\sqrt{2\pi}\sigma}exp(-\frac{(wx-y)^2}{2\sigma^2})$$
 
 Dado X la distribución de y es: $$L(w)=\prod f(y|x:w)$$
 
-## __El enfoque probabilístico de siempre__ {.justificado}
+## __Nuestro enfoque favorito__ {.justificado}
 
 Para escoger $w$ tenemos que hacer que los datos sean tan probables como sea posible, i.e. hay que maximizar $L(w)$ o bien minimizar 
 $$\ell(w) = mlog\frac{1}{\sqrt{2\pi}\sigma}-\frac{1}{\sigma^2}\cdot \frac{1}{2}\sum (wt-y)^2$$
 
+## __Supuestos del modelo de regresión__
+
+- El modelo es lineal (en los parámetros).
+
+<details>
+$\alpha+\beta_1x_1+\beta_2x_2^2$
+</details>
+
+- La media de los residuales es cero.
+
+<details>
+`mean(lm$residuals)`
+</details>
+
+- Homoscedasticidad de los residuales.
+
+<details>
+`plot(lm)`
+</details>
+
+- Los residuales no están autocorrelacionados.
+
+<details>
+`acf(lm)`
+`lmtest::dwtest(lm)`
+</details>
+
+- Las variables independientes y los residuales tienen correlación cero.
+
+<details>
+`cor.test(df[,vars], lm$residuals)`
+</details>
+
+## __Supuestos del modelo de regresión__
+
+- Los datos deben tener formato _long_
+
+- La varianza de las variables independientes es positiva.
+
+- No multicolinealidad entre las variables independientes
+
+<details>
+`car::vif(lm)`
+</details>
+
+- Los residuales tienen distribución normal
+
+<details>
+`plot(lm)`
+</details>
+
 ## __Regresiones en R__
 
+```{r, message=FALSE}
+require(dplyr)
+require(caret)
+
+datos <- read.csv(paste0(here::here(),"/datos/uci-forest-fires/uci-forest-fires/forestfires.csv"))
+
+datos <- datos %>% select(-X, -Y, -month, -day)
+
+modelo <- lm(area~., datos) # usando el paquete stats
+```
+
+## __Podemos imprimir la información del modelo__
+
+```{r}
+modelo
+```
+
+## __Podemos obtener información más detallada__
+
+```{r}
+summary(modelo)
+```
+
+## __Validando supuestos__
+
+```{r, echo=FALSE, animation.hook='gifski'}
+for(i in 1:4){
+  plot(modelo, which = i)
+}
+```
 
 
 # __Regresión logística__
