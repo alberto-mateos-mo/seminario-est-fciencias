@@ -168,4 +168,80 @@ for(i in 1:4){
 
 # __Modelos lineales generalizados__
 
+# __Consideraciones (y reflexiones) sobre los modelos de "regresión"__
+
+## __Espacios de inputs dicotómicos__
+
+Es muy común encontrarnos con variables de "entrada" (explicativas) cuyo espacio de valores es dicotómico e.g. género, usar este tipo de variables en un modelo de regresión es bastante sencillo.
+
+La transformación más recurrida suele ser $\mathbb{I}_{\{0,1\}}$
+
+¿Qué implicaciones teóricas e interpretativas tiene?
+
+## __La transformación $\mathbb{I}_{\{0,1\}}$__ {.justificado}
+
+Supongamos un modelo lineal con una sola variable en el espacio $\mathcal{X}$, para fines prácticos pensemos que esa variable es _género_.
+
+La transformación en cuestión nos dará el modelo siguiente:
+
+$$y_i = \beta_0+\beta_1x_i+e_i = \begin{array}{lr} \beta_0+\beta_1+e_i & x = m\\ \beta_0+e_i & x\neq m\end{array}$$
+De tal forma que $\beta_0$ representará el valor _promedio_ para hombres, $\beta_0 + \beta_1$ el valor _promedio_ para mujeres y $\beta_1$ la diferencia _promedio_ entre hombre y mujeres.
+
+## __Otra transformación útil__ {.justificado}
+
+La decisión de usar la transformación anterior con $\{1=m,\  0\neq m\}$ es, en realidad, arbitraria y no tiene efecto alguno en la regresión pero sí en la interpretación.
+
+Si en lugar de usar la transformación $\mathbb{I}_{\{0,1\}}$, usamos: $\{1=m, \ -1\neq m\}$, tendríamos el siguiente modelo:
+
+$$y_i = \beta_0+\beta_1x_i+e_i = \begin{array}{lr} \beta_0+\beta_1+e_i & x = m\\ \beta_0-\beta_1+e_i & x\neq m\end{array}$$
+De esta forma $\beta_0$ sería el valor _base_ y $\beta_1$ la cantidad por la que las mujeres están por arriba (y los hombres por debajo) del valor base.
+
+ <font size="5">¿Cómo sería $\beta_1$ en este caso, respecto al valor que tomaría en la transformación $\mathbb{I}_{\{0,1\}}$? </font>
+
+## __Espacios de inputs categóricos__
+
+¿Qué ocurre cuando alguna variable del espacio $\mathcal{X}$ tiene n-categorias ($n>2$)?
+
+Por ejemplo en los datos del Facebook tenemos la variable _Type_ que nos indica el tipo del post:
+
+```{r, echo=FALSE}
+fb <- read.csv("C:/Users/David Alberto MMO/Documents/Ayudantias/2020-2/seminario-est-fciencias/datos/uci-facebook-metrics/uci-facebook-metrics/dataset_Facebook.csv", sep = ";")
+
+table(fb$Type)
+```
+
+Sin embargo al hacer el modelo de regresión con esta variable, éste no contempla una categoría (¿o sí?): 
+
+![](www/reg_out.png)
+
+## __Sobre el supuesto aditivo__
+
+Recordemos que el supuesto aditivo implica que el efecto en $Y$ bajo cambios en $X_j$ es independiente del valor de $X_i,\  \forall \ i\neq j$. Este supuesto es muy restrictivo y en la práctica no se suele cumplir.
+
+Una forma de _relajar_ este supuesto es permitir la presencia de _interacciones_ como una variable de _input_, con lo cual pasaríamos de:
+
+$$Y = \beta_0+\beta_1X_1+\beta_2X_2+e$$
+al modelo:
+
+$$Y = \beta_0+\beta_1X_1+\beta_2X_2+\beta_3X_1X_2+e$$
+
+## __Sobre el supuesto aditivo__
+
+¿Y eso no sigue siendo aditivo? Pues sí y no...
+
+$$Y = \beta_0+\beta_1X_1+\beta_2X_2+\beta_3X_1X_2+e$$
+
+$$Y = \beta_0+(\beta_1+\beta_3X_2)X_1+\beta_2X_2+e$$
+
+$$Y = \beta_0+\hat{\beta_1}X_1+\beta_2X_2+e$$
+En un modelo con interacciones (como este) los cambios en $X_2$ modificarán el efecto de $X_1$ en $Y$
+
 # __Selección de modelos__
+
+
+
+
+
+
+
+
