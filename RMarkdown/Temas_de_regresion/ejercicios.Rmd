@@ -1,0 +1,95 @@
+---
+title: "Ejercicios de regresión"
+author: "Seminario de estadística"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1
+
+Supongamos que tenemos un conjunto de datos con 5 variables en el espacio $\mathcal{X}$: $X_1=GPA, \ X_2=IQ, \ X_3=Genero, \ X_4=Interacción \ X_1*X_2, \ X_5=Interacción \ X_1*X_3$. 
+
+La variable dependiente es el primer salario después de graduarse.
+
+Sopongamos que ajustamos un modelo de regresión lineal y obtenemos: 
+
+- $\beta_0=50$
+
+- $\beta_1=20$
+
+- $\beta_2=0.07$
+
+- $\beta_3=35$
+
+- $\beta_4=0.01$
+
+- $\beta_5=-10$
+
+
+1. ¿Cuál de las siguientes es correcta y por qué?
+
+    1.1 Para valores fijos de IQ y GPA, los hombres ganan, en promedio, más que las mujeres.
+    
+    1.2 Para valores fijos de IQ y GPA, las mujeres ganan, en promedio, más que los hombres.
+    
+    1.3 Para valores fijos de IQ y GPA, los hombres ganan, en promedio, más que las mujeres siempre que el GPA sea suficientemente alto.
+    
+    1.4 Para valores fijos de IQ y GPA, las mujeres ganan, en promedio, más que los hombres siempre que el GPA sea suficientemente alto.
+
+2. Prediga el salario de una mujer con IQ de 110 y GPA de 4.0
+
+3. Dado que la beta de la interacción GPA/IQ es muy pequeña, no hay evidencia que sostenga que la interacción existe (Cierto/Falso) y por qué.
+
+### 2
+
+Considere una regresión lineal sin intercepto, es decir $$y_i=x_i\beta$$
+con $$\beta=\sum_{i=1}^nx_iy_i/(\sum_{i'=1}^nx_{i'}^2)$$
+Muestres que podemos escribir: $$y_i = \sum_{i'=1}^na_{i'}y_{i'}$$
+¿Quién es $a_{i'}$
+
+### 3
+
+Pruebe que en el caso de regresión lineal simple, la $R^2$ es igual al cuadrado de la correlación entre $x$ y $y$
+
+### 4
+
+La siguiente tabla corresponde a la salida de un modelo de regresión con el cual se busca explicar ventas con inversiones en marketing en TV, radio y periódicos.
+
+| | Coefficient | Std. error | t-statistic | p-value |
+|:------:|:------:|:------:|:------:|:------:|
+| Intercept | 2.939 |0.3119| 9.42| < 0.0001|
+|TV |0.046 |0.0014 |32.81 |< 0.0001|
+|radio |0.189 |0.0086 |21.89 |< 0.0001|
+newspaper| −0.001 |0.0059 |−0.18 |0.8599|
+
+Describa la hipótesis nula que se realiza. Explique que conclusiones puede obtener basado en la tabla (la explicación no debe ser técnica).
+
+### 5
+
+Para el modelo de regresión logística pruebe que si: $$p(X)=\frac{e^{\beta_0+\beta_1X}}{1+e^{\beta_0+\beta_1X}}$$
+entonces: $$\frac{p(X)}{1-p(X)}=e^{\beta_0+\beta_1X}$$
+
+### 6
+
+Suponga que recolectamos datos para un grupo de estudiantes de una clase del seminario de estadística y medimos $X_1=horas \ de\ estudio, \ X_2=promedio, \ Y = sacará \ 10$. Ajustamos un modelo de regresión logística y obtenemos:
+
+- $\beta_0=-6$
+
+- $\beta_1=0.05$
+
+- $\beta_2=1$
+
+1. Estime la probabilidad de que un estudiante que estudia 40horas y tiene promedio de 9 obtenga 10 en la clase
+2. ¿Cuántas horas necesita estudiar el alumno anterior para tener buena probabilidad de sacar 10 en la clase?
+
+### 7
+
+Este ejercicio debe hacerse con los datos _Weekly_ del paquete `ISLR`.
+
+1. Haga descriptivos, comente.
+2. Ajuste una regresión logística con $y=Direction$ y las 5 variables _lag_ + Volume como el espacio $\mathcal{X}$, comente
+3. Ajuste un modelo de regresión logística usando el periodo 1990-2008 como conjunto de entrenamiento y usando Lag2 como la única variable del espacio $\mathcal{X}$, prediga y evalue los resultados para el periodo 2009-2010, comente
+4. Los comentarios deben ser tanto técnicos como no técnicos.

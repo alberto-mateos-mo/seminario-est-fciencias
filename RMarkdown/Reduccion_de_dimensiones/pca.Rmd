@@ -1,0 +1,168 @@
+---
+title: "Principal Component Analysis"
+subtitle: "⚔<br/>"
+author: "David Mateos"
+institute: "Facultad de Ciencias"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+## Fundamentos
+
+Sea $k \in [1, N]$, sea $X$ una matriz de datos centrada respecto a la media, i.e. $\sum_{i=1}^mx_i=0$ y llamemos $\mathcal{P}_k$ al conjunto de matrices de proyecciones ortogonales. 
+
+El algoritmo de componentes principales consiste en proyectar el n-espacio de datos en el k-subespacio que minimiza el _error de reconstrucción_, entendido como la suma del cuadrado de las $L_2-distancias$ entre los datos originales y los datos proyectados.
+
+
+El problema consiste en encontrar la matriz de proyección ortogonal que es solución del problema de optimización:
+
+$$\min_{P\in\mathcal{P_k}}||PX-X||_F^2$$
+donde $|| \cdot ||_F$ es la [norma de Frobenius](https://mathworld.wolfram.com/FrobeniusNorm.html)
+
+---
+
+## Teorema
+
+Sea $P^*\in \mathcal{P_k}$ la solución al algoritmo de componentes principales, entonces $P^*=U_k U_k^T$ donde $U_k\in \mathbb{R}^{N \times k}$ es la matriz formada por los _primeros_ $k$ eigen-vectores de la matriz de covarianzas  de $X$.
+
+Más aún, la representación $k-dimensional$ de $X$ asociada a $P^*$ está dada por $Y=U_k^TX$
+
+__Ejercicio:__ Demuestre el teorema. 
+
+---
+
+## PCA en R (procesamiento de imagenes)
+
+Los datos que usaremos provienen de la base MNIST que consiste de imágenes de números escritos a mano, los datos los pueden encontrar [aquí.](https://www.kaggle.com/c/digit-recognizer)
+
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+require(dplyr)
+require(ggplot2)
+require(unam.theme)
+load("mnist_pca.RData")
+```
+
+En los datos tenemos 42,000 observaciones (números escritos a mano) y 785 variables, cada una representa un pixel de la imagen digitalizada del número.
+
+```{r}
+dim(datos)
+```
+
+```{r}
+datos %>% 
+  sample_n(5) %>% 
+  select(c(1, 202:207))
+```
+
+---
+
+## PCA en R
+
+El objetivo que tenemos es generar un modelo que, usando la información de las imágenes digitalizadas, pueda _predecir_ de qué número se trata.
+
+Muchos de los algoritmos de _machine learning_ son sensibles a dimensiones muy grandes por lo que antes de comenzar a implementar cualquier modelo buscamos encontrar el $k-subespacio$ que mejor represente a los datos originales, para ello nos ayudaremos del algoritmo de componentes principales.
+
+```{r, echo=FALSE}
+datos <- datos %>% 
+  select(-label)
+```
+ 
+---
+
+## ¿Cómo se ve un número del conjunto de datos?
+
+```{r, echo=FALSE}
+rand_number <- matrix(as.matrix(datos[100,]), nrow = 28)
+
+heatmap(x = rand_number, Colv = NA, Rowv = NA, revC = F, scale = "none", col = grey.colors(1000))
+```
+
+
+---
+
+## ¿Cómo se ve la información de un pixel?
+
+```{r, echo=FALSE}
+rand_pixel <- matrix(as.matrix(datos[,200]), nrow = 210)
+
+heatmap(x = rand_pixel, Colv = NA, Rowv = NA, revC = F, scale = "none", col = grey.colors(1000))
+```
+
+---
+
+## Básicamente queremos encontrar un espacio con "menos pixels"
+
+```{r, tidy=FALSE, eval = FALSE}
+compo <- prcomp(datos, 
+                center = TRUE, #<<
+                scale. = F, 
+                rank. = 80, 
+                retx = TRUE)
+```
+
+---
+
+## ¿Qué tan bueno es el subespacio?
+ 
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+cumpro <- data.frame(pc = 1:80, cumvar = cumsum(compo$sdev^2/sum(compo$sdev^2))[1:80])
+
+ggplot(cumpro, aes(pc, cumvar))+
+  geom_line()+
+  geom_point()+
+  labs(x = "Componente", y = "Varianza acumulada")+
+  theme_unam()
+```
+
+---
+
+## Elementos del objeto `prcomp`
+
+- sdev	
+__the standard deviations of the principal components (i.e., the square roots of the eigenvalues of the covariance/correlation matrix, though the calculation is actually done with the singular values of the data matrix).__
+
+Con estos valores se calcula la proporción de varianza explicada
+
+- rotation	
+__the matrix of variable loadings (i.e., a matrix whose columns contain the eigenvectors). The function princomp returns this in the element loadings.__
+
+Esto es la matriz $U_k$ del teorema.
+
+¿Cómo obtendrían $Y$ (los datos transformados)? 
+
+---
+
+## ¿Qué significan los componentes principales?
+
+Correr esto en R:
+
+```{r, eval=FALSE}
+library(shiny)
+
+ui <- fluidPage(
+  sidebarPanel(sliderInput("componente", label = "Selecciona el componente principal:", min = 1, max = 80, step = 1, value = 1)),
+  mainPanel(plotOutput("grafica"))
+)
+
+server <- function(input, output, session) {
+  load(paste0(here::here(),"/RMarkdown/Reduccion_de_dimensiones/mnist_pca.RData"))
+  
+  output$grafica <- renderPlot({
+  i <- input$componente
+
+  kk <- matrix(compo$rotation[,i], nrow = 28)
+
+  heatmap(kk, Colv = NA, Rowv = NA, revC = F, scale = "none", col = grey.colors(1000))
+})
+}
+
+shinyApp(ui, server)
+```
+
+

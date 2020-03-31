@@ -1,0 +1,10 @@
+name: Publish Document
+title:
+username:
+account: rpubs
+server: rpubs.com
+hostUrl: rpubs.com
+appId: https://api.rpubs.com/api/v1/document/588045/518c72d190094f7d9cc39293f8755fd0
+bundleId: https://api.rpubs.com/api/v1/document/588045/518c72d190094f7d9cc39293f8755fd0
+url: http://rpubs.com/david_alberto-fciencias/588045
+when: 1584986838.02187
