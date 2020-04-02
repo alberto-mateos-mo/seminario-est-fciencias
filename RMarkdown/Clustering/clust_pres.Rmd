@@ -1,0 +1,133 @@
+---
+title: "Clustering"
+output: revealjs::revealjs_presentation
+---
+
+## Algorítmos de clustering
+
+- Son técnicas que permiten encontrar subgrupos (clusters) en un conjunto de datos.
+
+- Buscamos crear particiones que contengan elementos similares entre ellos pero distintos respecto a elementos de otra partición.
+
+- Se trata de un problema no supervisado que tiene como objetivo encontrar la "estructura" de los datos.
+
+## Algunas definiciones importantes
+
+- $C_1, C_2,...,C_k$ es una partición de $C$ de tamaño $k$ si $\cup_i \ C_i = C$ y $C_i \cap C_j=\varnothing$ si $i\neq j$
+
+- Una medida de disimiliaridad en un conjunto finito $X$, es una función $d:X\times X \rightarrow \mathbb{R}$, simétrica.
+
+- Un clúster es un subconjunto $C_i$ donde $C_1, C_2,...,C_k$ es una partición de $C$
+
+## Análisis de clústers
+
+- Dan una descripción de los datos en términos de una fuerte similitud interna por lo que los clústers usualmente se definen en términos de cohesión interna e isolación externa.
+
+- Diferentes clusterizaciones pueden ser comparadas respecto a:
+
+  - Densidad
+
+  - Varianza
+
+  - Forma
+
+  - Separación
+
+## Algoritmos de optimización iterativa
+
+1. Particion inicial de los datos
+
+2. Para cada clúster se asigna un "centro"
+
+3. Se recalculan los miembros de cada clúster usando los "centros"
+
+4. Se actualizan los centros con la nueva asignación de miembros
+
+5. Se repiten los pasos 2 a 4 hasta que no haya asignaciones nuevas  o no haya cambios en la calidad de los clústers.
+
+## Ejemplo K-Means
+
+```{r, echo=FALSE, message=FALSE}
+require(ggplot2)
+```
+
+```{r}
+n <- 200
+
+b1 <- 25*cbind(rnorm(n,-1,.5),rnorm(n,-1,.5))
+b2 <- 25*cbind(rnorm(n,-1,.5),rnorm(n, 1,.5))
+b3 <- 25*cbind(rnorm(n, 1,.5),rnorm(n,-1,.5))
+b4 <- 25*cbind(rnorm(n, 1,.5),rnorm(n, 1,.5))
+
+b           <- as.data.frame(cbind(rbind(b1,b2,b3,b4),0))
+colnames(b) <- c("x","y","cluster")
+```
+
+## Ejemplo K-Means
+
+```{r, echo=FALSE}
+ggplot(b, aes(x=x, y=y)) + geom_point(size=1) + geom_density2d(size=1.05) + theme_minimal()
+```
+
+## Ejemplo K-Means
+
+```{r}
+graficas <- list()
+
+for( i in 1:12){ 
+k <- kmeans(b,
+            centers = i,          # tomar una particion aleatoria de tamaño i
+            iter.max = 50,        # max num de iteraciones
+            nstart = 1,           # if centers is a number, how many random sets should be chosen?
+            algorithm = "Hartigan-Wong", #c("Hartigan-Wong", "Lloyd", "Forgy", MacQueen")
+            trace = FALSE)
+
+b$cluster     <- k$cluster # asignamos el cluster
+graficas[[i]] <- ggplot(b, aes(x=x, y=y)) + 
+  geom_point(aes(colour= as.factor(cluster))) + 
+  ggtitle(paste("clusters = ",i,"\n Variación Interna = ", round(k$tot.withinss,1)))+
+  theme_minimal()
+}
+```
+
+## Ejemplo K-Means
+
+```{r, fig.show='animate', echo=FALSE, dev='jpeg'}
+for(i in 1:12){
+  print(graficas[[i]])
+}
+```
+
+## Ejercicio
+
+- Usando [esta imagen]() aplique el algoritmo k-medias para comprimirla a través de una reducción del número de colores usados.
+
+- La idea es clusterizar el espacio de colores y reemplazar cada pixel con el centro del clúster al que pertenece.
+
+## Hint
+
+```{r, eval=FALSE}
+require(jpeg)
+require(ggplot2)
+
+img <- readJPEG("RMarkdown/Clustering/ColorfulBird.jpg")
+
+dim(img)
+
+img_df <- data.frame(
+  x = rep(1:dim(img)[2], each = dim(img)[1]),
+  y = rep(dim(img)[1]:1, dim(img)[2]),
+  R = as.vector(img[,,1]),
+  G = as.vector(img[,,2]),
+  B = as.vector(img[,,3])
+)
+
+ggplot(data = img_df, aes(x = x, y = y)) + 
+  geom_point(colour = rgb(img_df[c("R", "G", "B")])) +
+  labs(title = "Original Image:") +
+  theme_minimal()
+```
+
+## Imagen
+
+![](bird_plot.png)
