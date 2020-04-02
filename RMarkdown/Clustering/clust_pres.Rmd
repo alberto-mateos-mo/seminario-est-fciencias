@@ -100,7 +100,7 @@ for(i in 1:12){
 
 ## Ejercicio
 
-- Usando [esta imagen]() aplique el algoritmo k-medias para comprimirla a través de una reducción del número de colores usados.
+- Usando [esta imagen](https://github.com/alberto-mateos-mo/seminario-est-fciencias/blob/master/RMarkdown/Clustering/ColorfulBird.jpg) aplique el algoritmo k-medias para comprimirla a través de una reducción del número de colores usados.
 
 - La idea es clusterizar el espacio de colores y reemplazar cada pixel con el centro del clúster al que pertenece.
 
