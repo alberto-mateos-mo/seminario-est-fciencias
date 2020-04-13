@@ -131,3 +131,65 @@ ggplot(data = img_df, aes(x = x, y = y)) +
 ## Imagen
 
 ![](bird_plot.png)
+
+## El espacio de colores RGB
+
+![](rgb_colour_space.png)
+
+## Clustering k-means con 3 grupos
+
+Clustering en el espacio RGB | Clustering en el espacio $PCA^2$
+:----------------------------|----------------------------:
+![](kmeans3.png) | ![](clustPlot3.png)
+
+## Comparativo
+
+Imagen en el espacio de colores original | Imagen en un espacio de 3 colores
+:----------------------------------------|----------------------------------------:
+![](bird_plot.png) | ![](image3.png)
+
+## Clustering k-means con 4 grupos
+
+Clustering en el espacio RGB | Clustering en el espacio $PCA^2$
+:----------------------------|----------------------------:
+![](kmeans4.png) | ![](clustPlot4.png)
+
+## Comparativo
+
+Imagen en el espacio de colores original | Imagen en un espacio de 4 colores
+:----------------------------------------|----------------------------------------:
+![](bird_plot.png) | ![](image4.png)
+
+## Clustering k-means con 5 grupos
+
+Clustering en el espacio RGB | Clustering en el espacio $PCA^2$
+:----------------------------|----------------------------:
+![](kmeans5.png) | ![](clustPlot5.png)
+
+## Comparativos
+
+Imagen en el espacio de colores original | Imagen en un espacio de 5 colores
+:----------------------------------------|----------------------------------------:
+![](bird_plot.png) | ![](image5.png)
+
+## Clustering k-means con 10 grupos
+
+Clustering en el espacio RGB | Clustering en el espacio $PCA^2$
+:----------------------------|----------------------------:
+![](kmeans10.png) | ![](clustPlot10.png)
+
+## Comparativos
+
+Imagen en el espacio de colores original | Imagen en un espacio de 10 colores
+:----------------------------------------|----------------------------------------:
+![](bird_plot.png) | ![](image10.png)
+
+## Características de las clusterizaciones
+
+|           Métrica           |   n = 3   |   n = 4   |   n = 5   |   n = 10  |
+|:---------------------------:|:---------:|:---------:|:---------:|:---------:|
+|     Total sum of squares    |  108,971  |  108,971  |  108,971  |  108,971  |
+| Total within sum of squares | 39,999.45 | 30,435.43 |  27,286.2 | 12,324.78 |
+|    Between sum of square    | 68,971.52 | 78,535.54 | 81,684.77 | 96,646.19 |
+|       Between / Total       |    0.63   |    0.72   |    0.75   |    0.89   |
+
