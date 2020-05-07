@@ -1,6 +1,8 @@
 ---
 title: "Clustering"
-output: revealjs::revealjs_presentation
+output: 
+ revealjs::revealjs_presentation:
+   css: custom.css
 ---
 
 ## Algorítmos de clustering
@@ -192,4 +194,165 @@ Imagen en el espacio de colores original | Imagen en un espacio de 10 colores
 | Total within sum of squares | 39,999.45 | 30,435.43 |  27,286.2 | 12,324.78 |
 |    Between sum of square    | 68,971.52 | 78,535.54 | 81,684.77 | 96,646.19 |
 |       Between / Total       |    0.63   |    0.72   |    0.75   |    0.89   |
+
+## Clustering espectral
+
+```{r, echo=FALSE}
+library(mlbench)
+library(ggplot2)
+
+obj <- mlbench.spirals(100,1,0.025)
+my.data <-  as.data.frame(4 * obj$x)
+
+ggplot(my.data)+
+  geom_point(aes(V1, V2))+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank())
+```
+
+## Primer intento
+
+```{r, message=FALSE, warning=FALSE, eval=FALSE}
+library(factoextra)
+
+k <- kmeans(my.data, centers = 2)
+fviz_cluster(k, my.data, geom = "point")+
+  theme_minimal()+
+  theme(axis.title = element_blank(),
+        axis.text = element_blank())
+```
+
+## Primer intento
+
+```{r, message=FALSE, warning=FALSE, echo=FALSE}
+library(factoextra)
+
+k <- kmeans(my.data, centers = 2)
+fviz_cluster(k, my.data, geom = "point")+
+  theme_minimal()+
+  theme(axis.title = element_blank(),
+        axis.text = element_blank())
+```
+
+## Segundo intento, (1er paso)
+
+- Construir la matriz de similaridad usando un kernel gaussiano $$exp(-\alpha||x_i-x_j||^2)$$
+
+```{r, echo=FALSE}
+s <- function(x1, x2, alpha=1) {
+  exp(- alpha * norm(as.matrix(x1-x2), type="F"))
+}
+
+make.similarity <- function(my.data, similarity) {
+  N <- nrow(my.data)
+  S <- matrix(rep(NA,N^2), ncol=N)
+  for(i in 1:N) {
+    for(j in 1:N) {
+      S[i,j] <- similarity(my.data[i,], my.data[j,])
+    }
+  }
+  S
+}
+
+S <- make.similarity(my.data, s)
+S[1:8,1:8]
+```
+
+
+## 2° paso
+
+- Proyectar los datos a un RKHS (reproducing kernel Hilbert space)
+
+- $||f-g||<\delta \rightarrow |f(x)-g(x)|<\epsilon$
+
+## 2° paso
+
+```{r, echo=FALSE}
+make.affinity <- function(S, n.neighboors=2) {
+  N <- length(S[,1])
+
+  if (n.neighboors >= N) {  # fully connected
+    A <- S
+  } else {
+    A <- matrix(rep(0,N^2), ncol=N)
+    for(i in 1:N) { # for each line
+      # only connect to those points with larger similarity 
+      best.similarities <- sort(S[i,], decreasing=TRUE)[1:n.neighboors]
+      for (s in best.similarities) {
+        j <- which(S[i,] == s)
+        A[i,j] <- S[i,j]
+        A[j,i] <- S[i,j] # to make an undirected graph, ie, the matrix becomes symmetric
+      }
+    }
+  }
+  A  
+}
+
+A <- make.affinity(S, 3)  # use 3 neighboors (includes self)
+
+D <- diag(apply(A, 1, sum))
+
+U <- D - A
+
+"%^%" <- function(M, power)with(eigen(M), vectors %*% (values^power * solve(vectors)))
+
+k   <- 2
+evL <- eigen(U, symmetric=TRUE)
+Z   <- as.data.frame(evL$vectors[,(ncol(evL$vectors)-k+1):ncol(evL$vectors)])
+
+ggplot(Z)+
+    geom_point(aes(V1, V2), 
+    position = position_jitter(width = 0.001, height = 0.001), 
+    alpha = 0.2, colour = "#242F34")+
+  theme_minimal()+
+  theme(axis.title = element_blank(),
+        axis.text = element_blank())+
+  ggtitle("Proyección en RKHS")
+```
+
+## 3er paso
+
+- Clusterizamos en la proyección
+
+```{r eval=FALSE}
+km <- kmeans(Z, centers=2, nstart=5)
+fviz_cluster(km, my.data, geom = "point")+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank())
+```
+
+## 3er paso
+
+```{r echo=FALSE}
+km <- kmeans(Z, centers=2, nstart=5)
+fviz_cluster(km, my.data, geom = "point")+
+  theme_minimal()+
+  theme(axis.text = element_blank(),
+        axis.title = element_blank())
+```
+
+## Clustering jerárquico
+
+## Ejemplo: Single Linkage
+
+- Créditos: [Allison Horst](https://github.com/allisonhorst)
+
+## {data-background="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/cluster_single_linkage_1.jpg"}
+
+## {data-background="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/cluster_single_linkage_2.jpg"}
+
+## {data-background="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/cluster_single_linkage_3.jpg"}
+
+## {data-background="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/cluster_single_linkage_4.jpg"}
+
+## {data-background="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/cluster_single_linkage_5.jpg"}
+
+## {data-background="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/cluster_single_linkage_6.jpg"}
+
+## {data-background="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/other-stats-artwork/cluster_single_linkage_7.jpg"}
+
+
+
 

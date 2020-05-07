@@ -5,7 +5,7 @@ require(dplyr)
 require(factoextra)
 
 
-img <- readJPEG("RMarkdown/Clustering/ColorfulBird.jpg")
+img <- readJPEG("RMarkdown/Clustering/example1/fishes.jpg")
 
 dim(img)
 
@@ -17,7 +17,7 @@ img_df <- data.frame(
   B = as.vector(img[,,3])
 )
 
-n <- 10 # change this
+n <- 8 # change this
 
 k <- kmeans(img_df[,c("R", "G", "B")], centers = n)
 

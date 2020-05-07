@@ -1,0 +1,11 @@
+---
+title: "SVM"
+author: "David Mateos - Data Scientist Analyst"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## 

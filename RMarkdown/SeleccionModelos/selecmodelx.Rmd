@@ -1,0 +1,263 @@
+---
+title: "Selección de modelos"
+subtitle: "⚔<br/>Teoría y aplicaciones"
+author: "David Mateos"
+institute: "Facultad de Ciencias, UNAM."
+output:
+  xaringan::moon_reader:
+    css: xaringan-themer.css
+    lib_dir: libs
+    nature:
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r xaringan-themer, include=FALSE, warning=FALSE}
+library(xaringanthemer)
+style_mono_light()
+```
+
+# Motivación
+
+- En estadística nos enfrentaremos a una número importante de modelos que pueden usarse para explicar el fenómeno presente en nuestros datos.
+
+- ¿Qué variables incluir?, ¿debería incluir interacciones?, ¿cuáles?.
+
+- Un esquema de selección debe combinar, por un lado, una estrategia de busqueda en el espacio de modelos posibles y, por otro lado, un criterio de comparación.
+
+- Cuando el número de posibles modelos es muy grande generalmente se emplea una técnica _ambiciosa_ que parte de un modelo inicial y en cada paso, exploramos el espacio de modelos posibles escogiendo aquel que sea mejor de entre los _cercanos_ al último explorado.
+
+???
+
+Ejemplo: modelo de regresión lineal.
+
+Preguntar si conocen criterios de comparación.
+
+---
+
+# Ejemplo
+
+- En un modelo lineal generalizado con un espacio de inputs de tamaño _p_ hay $2^p$ posibles modelos.
+
+- Si _p_ fuera suficientemente pequeño podríamos listar todos los modelos.
+
+- __Forward Selection:__ Empezamos con el modelo sin variables y vamos agregandolas una por una escogiendo aquella que cumple cierto criterio.
+
+- __Backward Selection:__ Empezamos con el modelo de todas las variables y vamos quitando aquellas menos _importantes_ de acuerdo a algún otro criterio.
+
+???
+
+Es posible que estén familiarizados con el esquema Backward Selection aunque no conocían el nombre.
+
+¿Cuál es el criterio que usan en Backward Selection?
+
+---
+
+# Esquemas más populares
+
+- Akaike Information Criterion.
+
+- Bayesian Information Criterion.
+
+- Cross-validation.
+
+???
+
+Los esquemas BIC y validación cruzada buscan optimizar el desempeño predictivo del modelo elegido. 
+
+El esquema AIC busca maximizar la probabilidad de seleccionar el mejor modelo bajo el supuesto de que éste estuvo dentro del espacio de modelos evaluados.
+
+---
+class: center, middle
+
+# Empecemos con la teoría.
+
+![](https://media.giphy.com/media/OYzMbsyjN0pa/giphy.gif)
+---
+
+# Akaike Information Criterion.
+
+Es una aproximación asíntótica a la divergencia Kullback-Leibler entre el modelo de interés y _la verdad_.
+
+Supongamos una colección de modelos $\mathbb{M} = \{\mathcal{M_1},\dots,\mathcal{M_K}\}$ donde $\mathcal{M_k}:=\{f(y|\theta_k):\theta_k\in\Theta_k\}$.
+
+Para cada $\mathcal{M}_k$ sea $\hat{\theta}_k$ el estimador máximo verosímil y $\hat{f}_k=f(.|\hat{\theta}_k)$.
+
+Usando la divergencia Kullback-Leibler podemos calcular $$D(f_0||\hat{f}_k)=\int f_0\ log(f_0)-\int f_0\ log(\hat{f}_k)$$
+
+---
+
+# Akaike Information Criterion.
+
+Dado que en realidad observamos la distribución empírica podemos estimar el término negativo como $$\hat{H}_k=\frac{l_k(\hat{\theta}_k)}{n}$$
+
+Akaike propuse el siguiente estimador: $$\hat{H}_k=\frac{l_k(\hat{\theta}_k)-dim(\Theta_k)}{n}$$
+
+De donde se deriva el número AIC como: $$AIC(\mathcal{M}_k)=-2n \hat{H}_k$$
+
+???
+
+También llamada entropía relativa. Se define como la esperanza del logaritmo de las diferencias entre P y Q.
+
+Cada modelo es una familia paramétrica de densidades.
+
+Suponemos que los datos observados provienen de la densidad real $f_0$.
+
+Queremos máximizar el término negativo de la expresión de entropía cruzada.
+
+Como usamos datos para estimar el umvue de f y la distribución empírica, estamos sesgando positivamente y agregando correlación.
+
+Un error común es pensar que AIC solo puede usarse en modelos anidados sin embargo puede usarse entre modelos distintos siempre que la verosimilitud se calcule con los mismos datos.
+
+---
+
+# Bayesian Information Criterion.
+
+BIC es una aproximación para la selección de modelos Bayesiana _a posteriori_, máxima, dados los datos.
+
+Supongamos que establecemos una probabilidad _a priori_ $p_k$ para el modelo $\mathcal{M}_k$ y una _a priori_ para $\theta_k|\mathcal{M}_K$ de $\pi_k$.
+
+Buscamos elegir el modelo con la mayor probabilidad _a posteriori_; del teorema de Bayes la log-probabilidad _a posteriori_ es: $$log(\mathbb{P[\mathcal{M}|_1,...,Y_n]})=const+log(p_k)+log(\int exp(l_k(\theta_k))\pi_k(\theta_k) d\theta_k$$
+
+De donde derivamos que el mejor modelo se obtiene al minimizar $$BIC(\mathcal{M}_k)=-2l_k(\hat{\theta}_k)+dim(\Theta_k)log(n)$$
+
+???
+
+Schwarz, 1978
+
+Comparado con AIC se impone una mayor penalización por cada parámetro adicional, por lo que BIC eligirá modelos más simples.
+
+---
+
+# Cross-validation
+
+Si buscamos elegir el modelo cuyo desempeño predictivo sea el mejor lo ideal es contar con un conjunto de prueba _aislado_. En ausencia de esto podemos probar el modelo con una parte de los datos de entrenamiento.
+
+Esto puede hacerse repetidamente escogiendo porciones distintas cada vez.
+
+## V-fold cross-validation
+
+Los datos se dividen en $V$ subconjuntos del _mismo_ tamaño. En cada paso usamos $V-1$ subconjuntos para estimar los parámetros (entrenar el modelo) y probamos en el subconjunto restante. 
+
+Repertimos $V$ ocasiones y se reporta el error promedio.
+
+???
+
+Elecciones comunes del valor $V:$ 5, 10, n.
+
+Para n se define leave-one-out cross validation. Donde se usan todos los datos salvo una observación y se predice para ella.
+
+Para el caso continuo usamos MSE y para clasificación el número de observaciones mal clasificadas.
+
+BIC encuentra el mejor modelo explicativo.
+
+AIC y cross-validation encuentran el mejor modelo predictivo.
+
+---
+
+class: center, middle
+
+# Ahora un poco de práctica.
+
+![](https://media.giphy.com/media/wpoLqr5FT1sY0/giphy.gif)
+---
+
+# Funciones base.
+
+```{r}
+library(ISLR)
+
+train <- sample(392, 196) #<<
+
+modelo <- lm(mpg~horsepower, data = Auto, subset = train) #<<
+
+modelo2 <- lm(mpg~horsepower+cylinders, data = Auto, subset = train) #<<
+```
+
+---
+
+```{r}
+mean((Auto$mpg - predict(modelo, Auto))[-train]^2)  #<<
+mean((Auto$mpg - predict(modelo2, Auto))[-train]^2)  #<<
+
+AIC(modelo) #<<
+AIC(modelo2) #<<
+
+
+BIC(modelo) #<<
+BIC(modelo2) #<<
+```
+
+---
+
+# Usando CARET
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+library(caret)
+library(ISLR)
+```
+
+
+```{r}
+modelo <- train(mpg~horsepower, data = Auto,
+                method = "lm",
+                trControl = trainControl(method = "cv")) #<<
+
+modelo
+```
+
+???
+
+MAE = $\frac{1}{n}\sum|y_i-\hat{y}_i|$
+RMSE = $\sqrt{\frac{1}{n}\sum(y_i-\hat{y}_i)^2}$
+---
+
+# Usando CARET
+
+```{r}
+modelo <- train(mpg~horsepower, data = Auto,
+                method = "lm",
+                trControl = trainControl(method = "repeatedcv", #<<
+                                         number = 5, repeats = 2)) #<<
+
+modelo
+```
+
+---
+
+# Usando CARET
+
+```{r}
+modelo <- train(mpg~horsepower, data = Auto,
+                method = "lm",
+                trControl = trainControl(method = "LOOCV")) #<<
+modelo
+```
+
+---
+
+# Usando CARET
+
+```{r}
+modelo <- train(mpg~horsepower, data = Auto,
+                method = "lm",
+                trControl = trainControl(method = "LGOCV", p = 0.75)) #<<
+
+modelo
+```
+
+
+---
+
+# Otros esquemas
+
+- Feature Selection.
+
+- Bootstrap.
+
+- Information Value.
+
+- Curvas CAP y ROC.
+
+- Matrices de confusión.
