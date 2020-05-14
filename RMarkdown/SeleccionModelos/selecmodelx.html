@@ -170,7 +170,13 @@ class: center, middle
 
 ```r
 library(ISLR)
+```
 
+```
+## Warning: package 'ISLR' was built under R version 3.6.3
+```
+
+```r
 *train &lt;- sample(392, 196)
 
 *modelo &lt;- lm(mpg~horsepower, data = Auto, subset = train)
@@ -186,7 +192,7 @@ library(ISLR)
 ```
 
 ```
-## [1] 23.43993
+## [1] 26.59335
 ```
 
 ```r
@@ -194,7 +200,7 @@ library(ISLR)
 ```
 
 ```
-## [1] 20.00888
+## [1] 23.50381
 ```
 
 ```r
@@ -202,7 +208,7 @@ library(ISLR)
 ```
 
 ```
-## [1] 1188.743
+## [1] 1164.236
 ```
 
 ```r
@@ -210,7 +216,7 @@ library(ISLR)
 ```
 
 ```
-## [1] 1168.419
+## [1] 1134.693
 ```
 
 ```r
@@ -218,7 +224,7 @@ library(ISLR)
 ```
 
 ```
-## [1] 1198.577
+## [1] 1174.07
 ```
 
 ```r
@@ -226,7 +232,7 @@ library(ISLR)
 ```
 
 ```
-## [1] 1181.531
+## [1] 1147.805
 ```
 
 ---
@@ -253,11 +259,11 @@ modelo
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (10 fold) 
-## Summary of sample sizes: 353, 353, 352, 353, 353, 353, ... 
+## Summary of sample sizes: 353, 352, 354, 352, 353, 352, ... 
 ## Resampling results:
 ## 
 ##   RMSE      Rsquared   MAE     
-##   4.889429  0.6146108  3.838494
+##   4.857272  0.6161806  3.833695
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -288,11 +294,11 @@ modelo
 ## 
 ## No pre-processing
 ## Resampling: Cross-Validated (5 fold, repeated 2 times) 
-## Summary of sample sizes: 314, 313, 314, 314, 313, 313, ... 
+## Summary of sample sizes: 313, 314, 313, 315, 313, 313, ... 
 ## Resampling results:
 ## 
 ##   RMSE      Rsquared   MAE     
-##   4.898675  0.6065467  3.836965
+##   4.892954  0.6114872  3.839126
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -351,7 +357,7 @@ modelo
 ## Resampling results:
 ## 
 ##   RMSE      Rsquared   MAE     
-##   4.981237  0.6047401  3.878784
+##   4.854493  0.6060663  3.785006
 ## 
 ## Tuning parameter 'intercept' was held constant at a value of TRUE
 ```
@@ -361,15 +367,282 @@ modelo
 
 # Otros esquemas
 
-- Feature Selection.
-
 - Bootstrap.
+
+- Matrices de confusión.
 
 - Information Value.
 
 - Curvas CAP y ROC.
 
-- Matrices de confusión.
+---
+
+# Bootstrap
+
+Como sabemos o intuimos los datos con los que trabajamos son solo una porción de la realidad, ante esto...
+
+- ¿Hasta qué grado podemos confiar en que nuestros resultados serán _ciertos_ para toda la población?
+
+- ¿Qué tanto podrían variar bajo distintos sesgos en la información usada?
+
+La técnica de _bootstrapping_ trata de resolver estas preguntas.
+
+???
+
+Bootstrap es una técnica de resampleo de "estadísticos"
+
+---
+
+# _Boostrappeando_ en R
+
+
+```r
+library(boot)
+
+r2 &lt;- function(formula, data, index){
+  d &lt;- data[index,]
+  mod &lt;- lm(formula, data = d)
+  
+  return(summary(mod)$r.square)
+}
+
+results &lt;- boot(data = mtcars, statistic = r2, R = 1000, formula = mpg~wt+disp)
+```
+
+---
+
+
+```r
+results
+```
+
+```
+## 
+## ORDINARY NONPARAMETRIC BOOTSTRAP
+## 
+## 
+## Call:
+## boot(data = mtcars, statistic = r2, R = 1000, formula = mpg ~ 
+##     wt + disp)
+## 
+## 
+## Bootstrap Statistics :
+##      original     bias    std. error
+## t1* 0.7809306 0.01414221  0.05000535
+```
+
+---
+
+
+```r
+plot(results)
+```
+
+![](selecmodelx_files/figure-html/unnamed-chunk-10-1.png)&lt;!-- --&gt;
+
+---
+
+# _Boostrappeando_ en R, 2
+
+
+```r
+library(boot)
+
+r2_eval &lt;- function(data, index){
+  d &lt;- data[index,]
+  
+  mod1 &lt;- lm(data$mpg~data$wt+disp, data = d)
+  mod2 &lt;- lm(data$mpg~data$wt+disp+cyl, data = d)
+  mod3 &lt;- lm(data$mpg~data$wt+disp+cyl+hp, data = d)
+  
+  r2s &lt;- c(summary(mod1)$r.square, summary(mod2)$r.square, summary(mod3)$r.square)
+  
+  return(r2s)
+}
+
+results &lt;- boot(data = mtcars, statistic = r2_eval, R = 2000)
+```
+
+---
+
+
+```r
+results
+```
+
+```
+## 
+## ORDINARY NONPARAMETRIC BOOTSTRAP
+## 
+## 
+## Call:
+## boot(data = mtcars, statistic = r2_eval, R = 2000)
+## 
+## 
+## Bootstrap Statistics :
+##      original      bias    std. error
+## t1* 0.7809306 -0.01979465  0.01109731
+## t2* 0.8326070 -0.06328251  0.01574141
+## t3* 0.8486348 -0.07124143  0.01868209
+```
+
+---
+
+
+```r
+for(i in 1:3){
+  plot(results, index = i)
+}
+```
+
+![](selecmodelx_files/figure-html/unnamed-chunk-13-.gif)&lt;!-- --&gt;
+
+---
+
+# Information Value &amp; WoE
+
+Derivaron del uso de regresión logística particularmente en problemas de riesgo de crédito.
+
+Se utilizan para medir qué _tan bien_ una variable logra _distinguir_ una variable de respuesta binaria.
+
+---
+
+# WoE
+
+Se calcula de la siguiente forma:
+
+`$$WoE_{x=i} = log(\frac{P[y=0 |x=i]}{P[y=1|x=i]})$$`
+
+???
+
+Weight of Evidence
+
+Se llega a utilizar para transformar variables categóricas a numéricas
+
+---
+
+# Information Value
+
+Su cálculo se realiza de la siguiente forma:
+
+`$$IV_x = \int f(x|y=1)-f(x|y=0)*WoE_x \ dx$$`
+
+| IVx      | Poder predictivo |
+|----------|------------------|
+| &lt;0.02    | Variable no útil |
+| 0.02-0.1 | Poder débil      |
+| 0.1-0.3  | Poder medio      |
+| 0.3-0.5  | Poder alto       |
+| 0.5      | Sospechosa       |
+
+---
+
+# Matrices de confusión (y derivados...)
+
+- Son una forma de medir el desempeño de un algorítmo de clasificación.
+
+- De ellas derivan diferentes medidas que nos ayudan a entender más a fondo el desempeño de nuestro algorítmo.
+
+- En un problema de clasificación de 2 clases, la matriz se construye con la tabla cruzada entre las clases reales y las clases ajustadas/predichas
+
+|                   | Positivo Real | Negativo Real |
+|-------------------|---------------|---------------|
+| Positivo predicho |       TP      |       FP      |
+| Negativo predicho |       FN      |       TN      |
+
+???
+
+Las matrices de confusión se pueden extender a problemás de 2+ clases
+
+---
+
+# Estadísticos derivados de las matrices de confusión
+
+- `\(Sensitivity = \frac{TP}{TP+FN}\)`
+
+- `\(Specificity = \frac{TN}{TN+FP}\)`
+
+- `\(Prevalence = \frac{TP+FN}{TP+FP+TN+FN}\)`
+
+- `\(PPV = \frac{sensitivity*prevalence}{(sensitivity*prevalence)+((1-specificity)*(1-prevalence))}\)`
+
+- `\(NPV = \frac{sensitivity*(1-prevalence)}{((1-sensitivity)*prevalence)+((specificity)*(1-prevalence))}\)`
+
+???
+
+Sensitivity: true positive rate (how often a positive is true among real trues)
+
+Specificity: true negative rate(how often a negative is true among real negatives)
+
+Prevalence: how many real trues are there
+
+PPV: positive predicted values
+
+NPV: negative predicted values
+
+---
+
+# Estadísticos derivados de las matrices de confusión
+
+- `\(Detection \ rate = \frac{TP}{TP+FP+TN+FN}\)`
+
+- `\(Detection \ prevalence = \frac{TP+FP}{TP+FP+TN+FN}\)`
+
+- `\(Balanced \ accuracy = \frac{sensitivity+specificity}{2}\)`
+
+- `\(Precision = \frac{TP}{TP+FP}\)`
+
+- `\(Recall = \frac{TP}{TP+FN}\)`
+
+- `\(F-beta = \frac{(1+beta^2)*precision*recall}{(beta^2*precision)+recall}\)`
+
+???
+
+Detection rate: how many true positives am I detecting
+
+Detection prevalence: how many predicted positives do I have
+
+Precision: true positives among predicted positives
+
+Recall: true positives among real positives
+
+F: Harmonic mean of recall and precision, we use harmonic to punish for extreme values
+
+---
+
+# Curvas AUC-ROC
+
+Muchos algoritmos de clasificación no generan directamente el vector de clases predichas sino que primero obtienen el vector de probabilidades de pertenencia a cada clase.
+
+Dado un umbral o punto de corte para el vector de probabilidades se puede generar entonces un vector de clases asociado a ese vector.
+
+Es claro que el valor de ese umbral afectará directamente al _accuracy_ de clasificación del modelo.
+
+Las curvas AUC-ROC nos permiten medir el desempeño del algorítmo bajo distintos umbrales.
+
+ROC es una curva probabilística mientras que AUC es una medida de _separación._
+
+???
+
+Por eso es importante tener lectura del vector de probabilidades. No solo del valor que el agorítmo asigne como clase.
+
+Típicamente los algoritmos están programados para que el umbral sea 0.5.
+
+---
+
+# Construcción de una curva AUC-ROC
+
+Para generar una curva de ROC debemos graficar la métrica __1-specificity__ vs __sensitivity__.
+
+Para obtener el valor AUC debemos calcular el área bajo la curva ROC.
+
+![image from Towards Data Science](https://miro.medium.com/max/722/1*pk05QGzoWhCgRiiFbz-oKQ.png)
+
+---
+
+# R Lab
+
+Live-Coding?
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
@@ -417,32 +690,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
     deleted = true;
   });
 })();
-(function() {
-  "use strict"
-  // Replace <script> tags in slides area to make them executable
-  var scripts = document.querySelectorAll(
-    '.remark-slides-area .remark-slide-container script'
-  );
-  if (!scripts.length) return;
-  for (var i = 0; i < scripts.length; i++) {
-    var s = document.createElement('script');
-    var code = document.createTextNode(scripts[i].textContent);
-    s.appendChild(code);
-    var scriptAttrs = scripts[i].attributes;
-    for (var j = 0; j < scriptAttrs.length; j++) {
-      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
-    }
-    scripts[i].parentElement.replaceChild(s, scripts[i]);
-  }
-})();
-(function() {
-  var links = document.getElementsByTagName('a');
-  for (var i = 0; i < links.length; i++) {
-    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
-      links[i].target = '_blank';
-    }
-  }
-})();
 // adds .remark-code-has-line-highlighted class to <pre> parent elements
 // of code chunks containing highlighted lines with class .remark-code-line-highlighted
 (function(d) {
@@ -460,6 +707,17 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
 
 <script>
 slideshow._releaseMath = function(el) {

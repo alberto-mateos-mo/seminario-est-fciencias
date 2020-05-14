@@ -57,5 +57,6 @@ kantar_chaid <- function(df, atr, prec=0.05){
                                         
 }
 
+borrar <- function(){}
 ## Arbol con caret
 
