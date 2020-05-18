@@ -355,7 +355,7 @@ Se utilizan para medir qué _tan bien_ una variable logra _distinguir_ una varia
 
 Se calcula de la siguiente forma:
 
-$$WoE_{x=i} = log(\frac{P[y=0 |x=i]}{P[y=1|x=i]})$$
+$$WoE_{x=i} = log(\frac{P[y=1 |x=i]}{P[y=0|x=i]})$$
 
 ???
 
@@ -369,7 +369,7 @@ Se llega a utilizar para transformar variables categóricas a numéricas
 
 Su cálculo se realiza de la siguiente forma:
 
-$$IV_x = \int f(x|y=1)-f(x|y=0)*WoE_x \ dx$$
+$$IV_{x_i} = (P[Y = 1|x=i]-P[y=0|x=i])*WoE_{x_i}$$
 
 | IVx      | Poder predictivo |
 |----------|------------------|
@@ -484,6 +484,5 @@ Para obtener el valor AUC debemos calcular el área bajo la curva ROC.
 
 ---
 
-# R Lab
+# R Lab (regresión logística)
 
-Live-Coding?
