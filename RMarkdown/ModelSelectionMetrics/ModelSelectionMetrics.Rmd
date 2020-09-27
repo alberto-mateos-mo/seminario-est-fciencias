@@ -1,0 +1,240 @@
+---
+title: "R Lab: Model Selection"
+output: learnr::tutorial
+runtime: shiny_prerendered
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+library(learnr)
+library(caret)
+library(InformationValue)
+library(dplyr)
+library(boot)
+load("modeldata.RData")
+```
+
+
+## Bienvenido
+
+En este R Lab aplicaremos algunos de los conceptos que se revisaron en el tema __Selección de Modelos__, estos incluyen:
+
+* Métodos básicos, e.g. AIC, backward selection.
+* Boostrapping
+* WOE
+* Information Value
+* Confusion Matrix
+* Curvas AUC-ROC
+
+No hay ninguna necesidad de memorizar así que siéntase libre de usar [Google](www.google.com) y/o las slides que usamos en clase. 
+
+De hecho es algo que debería hacer.
+
+## Introducción
+
+Los datos que usaremos se encuentran precargados en este R Lab y consisten de los siguientes `dataframes`:
+
+- `datos`: Corresponden a los datos de _entrenamiento_.
+
+- `datos_test`: Corresponden a los datos de _prueba_.
+
+Usaremos esos datos para ajustar un modelo de regresión logística y aplicar los métodos de selección.
+
+La variable que queremos explicar se llama _earnings_, la cual está etiquetada con 0's y 1's e indica si la persona gana más de 50K.
+
+No hay demasiada necesidad de conocer los detalles de cada variable pero si así lo desean pueden consultarlos [aquí](https://archive.ics.uci.edu/ml/datasets/adult).
+
+Asuman que los datos están _limpios_ y que no es necesario pre-procesarlos para los ejercicios del R Lab.
+
+Es pertienente mencionarles que las librerias necesarias ya están precargadas, lo cual al mismo tiempo hace obligatorio el uso de las mismas para resolver los ejercicios.
+
+Las librerias en cuestión son:
+
+* caret
+* InformationValue
+* dplyr
+* boot
+
+__En donde sea necesario se hará referencia a las funciones que deberán usar para que puedan consultar cómo usarlas.__
+
+## Familiarizandonos con los datos
+
+Para garantizar que todo funciona bien empecemos por mirar los datos.
+
+__Escriba código que le permita revisar brevemente la información del dataframe datos.__
+
+```{r glimpse, exercise=TRUE}
+
+```
+
+<div id="glimpse-hint">
+**Hint:** Probablemente quiera usar la función `glimpse` de dplyr.
+</div>
+
+__Escriba código que le permita hacer un resumen de la variable `age`.__
+
+```{r age-summary, exercise=TRUE}
+
+```
+
+<div id="age-summary-hint">
+**Hint:** Probablemente quiera usar la función `summary`.
+</div>
+
+__Ahora escriba código que le permita crear una tabla con la variables `earnings`.__
+
+```{r earnings-table, exercise=TRUE}
+
+```
+
+<div id="earnings-table-hint">
+**Hint:** Probablemente quiera usar la función `table`.
+</div>
+
+## WOE & InformationValue
+
+### Do It Yourself
+
+Como primer paso queremos probar que entiende suficientemente bien la teoría como para implementarla en código.
+
+__Calcule manualmente el WOE para las dos categorías de la variable `sex`__
+
+```{r woe, exercise=TRUE}
+
+```
+
+__Ahora calcule el IV para las dos categorías de la variable `sex`__
+
+```{r iv-cat, exercise=TRUE}
+
+```
+
+__Ahora calcule el IV para la variable completa `sex`__
+
+```{r iv-var, exercise=TRUE}
+
+```
+
+
+### Let others do it for me
+
+Ahora que está claro que entiende cómo funciona el WOE e IV podemos usar una librería diseñada para calcularlos.
+
+La librería en cuestión es `InformationValue` y de ella, las dos funciones que usaremos son:
+
+* [WOETable](https://rdrr.io/cran/InformationValue/man/WOETable.html)
+* [IV](https://rdrr.io/cran/InformationValue/man/IV.html)
+
+Recuerde que la librería `boot` está precargada, así que no necesita cargarla de nuevo.
+
+__Complete el código para cálcular el WOE de la variable `sex`__
+
+```{r sex-woe, exercise=TRUE}
+WOETable(X = , Y = )
+```
+
+__Escriba código para calcular el WOE de alguna variable de su interés__
+
+```{r variable-woe, exercise=TRUE}
+
+```
+
+<div id="variable-woe-hint">
+**Hint:** Recuerde usar variables categóricas.
+</div>
+
+__Escriba el código para calcular el IV de la variable que usó en el ejercicio previo__
+
+```{r variable-iv, exercise=TRUE}
+
+```
+
+## Modelo logístico
+
+La siguiente tabla muestra los IV de las variables en el dataframe `datos`:
+
+| Variable       | IV     |
+|----------------|--------|
+|   RELATIONSHIP | 1.5739 |
+|  MARITALSTATUS | 1.3356 |
+|            AGE | 1.1748 |
+|    CAPITALGAIN | 0.8389 |
+|     OCCUPATION | 0.8259 |
+|   EDUCATIONNUM | 0.7776 |
+|      EDUCATION | 0.7774 |
+|   HOURSPERWEEK | 0.4682 |
+|            SEX | 0.3087 |
+|      WORKCLASS | 0.1633 |
+|    CAPITALLOSS | 0.1507 |
+|  NATIVECOUNTRY | 0.0815 |
+|           RACE | 0.0607 |
+|         FNLWGT | 0      |
+
+## Bootstrapping
+
+__Complete y corra el siguiente código para aplicar la técnica de bootstrapping al AIC del modelo logístico que explique`earnings` con las variables que prefiera.__
+
+Recuerde que la librería `boot` está precargada, así que no necesita cargarla de nuevo.
+
+```{r boot-aic, exercise=TRUE}
+get_aic <- function(data, index){
+  # Construya la función
+  # para extraer el AIC
+  # del objeto modelo
+  # creado en la sección
+  # anterior
+}
+
+results <- boot(R = 10) #Usemos R=10 para no esperar demasiado
+
+results
+
+plot(results)
+```
+
+## Matriz de confusión (y métricas asociadas)
+
+### DIY
+
+__Complete el siguiente código para obtener manualmente la matriz de confusión de su modelo, sensibilidad, especificidad y accuracy balanceado__
+
+N.B. Prediga con el conjunto `datos_test`
+
+```{r conf-mat, exercise=TRUE}
+modelo <- glm()
+
+predicted <- predict(type = "response")
+
+predicted_class <- ifelse()
+
+
+```
+
+### CARET
+
+__Complete el siguiente código para obtener la matriz de confusión de su modelo (y métricas asociadas) usando la librería `caret`__
+
+N.B. Prediga con el conjunto `datos_test`
+
+```{r conf-mat-caret, exercise=TRUE}
+modelo <- glm()
+
+predicted <- predict(type = "response")
+
+predicted_class <- ifelse()
+
+caret::confusionMatrix(table())
+```
+
+### AUC-ROC
+
+Graficar la curva AUC-ROC es demasiado fácil con una de las librerías mencionadas en la [Introducción] por lo que me gustaría retarlos a crear su propia función que lo haga con el único objetivo de demostrar que somos capaces de convertir teoría en código.
+
+Hay multiple funciones en internet, procuren no mirarlas antes de lograr obtener la suya. Por supuesto pueden apoyarse en articulos que aborden la teoría en caso de que lo crean necesario.
+
+Se pedirá que al menos un par de ustedes expliquen su función y su uso.
+
+## DIY
+
+Si algo no salió bien en este R Lab puedes 
