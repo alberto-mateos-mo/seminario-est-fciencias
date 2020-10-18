@@ -2,7 +2,6 @@ library(shiny)
 library(janitor)
 library(DT)
 library(ggplot2)
-
 source("descriptives_funcs.R")
 
 shinyUI(
