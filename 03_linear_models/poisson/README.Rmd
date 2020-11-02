@@ -58,3 +58,5 @@ _incidents_: número de incidentes por daño
 2. ¿Diría que el modelo es bueno?
 
 3. El uso de offset() en el modelo permite agregar variables cuyo parámetro se fija en el valor 1 en lugar de permitirle al algoritmo estimarlo. Explique por qué es buena idea usarlo para agregar la variable _service_ al modelo.
+
+N. B. Use los datos `ships` del paquete `MASS`

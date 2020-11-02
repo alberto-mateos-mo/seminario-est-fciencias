@@ -66,3 +66,5 @@ offset(log(service))+type+year+period`)
     parámetro se fija en el valor 1 en lugar de permitirle al algoritmo
     estimarlo. Explique por qué es buena idea usarlo para agregar la
     variable *service* al modelo.
+
+N. B. Use los datos `ships` del paquete `MASS`
