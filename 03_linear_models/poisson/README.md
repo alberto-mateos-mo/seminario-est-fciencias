@@ -13,9 +13,9 @@ El procedimiento se realizó con 200 filtros, lo que dió como resultados un pro
 
 |           Número de fibras           |  0-10 | 11-15 | 16-20 | 21-24 | 25-27 | 28-30 |  >=31 |  suma |
 |:------------------------------------:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|:-----:|
-| Número observado de filtros<br>$O_i$ |   2   |   1   |   36  |   52  |   50  |   39  |   20  |  200  |
-|  Número esperado de filtros<br>$E_i$ |  0.12 |  2.43 | 34.62 | 57.51 | 45.36 | 32.62 | 27.34 |  200  |
-|       $\frac{(O_i-E_i)^2}{E_i}$      | 30.25 |  0.85 |  0.06 |  0.53 |  0.48 |  1.25 |  1.97 | 35.39 |
+| Número observado de filtros<br>\\( O_i) \\ |   2   |   1   |   36  |   52  |   50  |   39  |   20  |  200  |
+|  Número esperado de filtros<br> \\( E_i) \\ |  0.12 |  2.43 | 34.62 | 57.51 | 45.36 | 32.62 | 27.34 |  200  |
+|       \\( \frac{(O_i-E_i)^2}{E_i}) \\      | 30.25 |  0.85 |  0.06 |  0.53 |  0.48 |  1.25 |  1.97 | 35.39 |
 
 El consultor estadístico asumió un modelo Poisson para el número observado de fibras.
 
