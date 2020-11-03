@@ -15,7 +15,7 @@ La siguiente es una tabla cruzada de las respuestas con el nivel de estudios.
 |  <Secundaria |        98       |        84       |       23       |
 |  Secundaria  |       574       |       286       |       50       |
 | Bachillerato |       122       |        44       |        4       |
-| Licenciatura |       168       |        57       |       11       |
+| Licenciatura |       268       |        57       |       11       |
 |   Posgrado   |       148       |        23       |        1       |
 
 
