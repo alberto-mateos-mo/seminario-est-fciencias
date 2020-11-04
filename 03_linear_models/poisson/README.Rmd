@@ -1,5 +1,5 @@
 ---
-title: "Ejercicios del modelo Poission"
+title: "Ejercicios del modelo Poisson"
 output: 
   github_document:
     pandoc_args: --webtex

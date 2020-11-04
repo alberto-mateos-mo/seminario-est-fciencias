@@ -1,4 +1,4 @@
-Ejercicios del modelo Poission
+Ejercicios del modelo Poisson
 ================
 
 ### 1
