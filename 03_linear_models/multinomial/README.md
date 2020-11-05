@@ -23,7 +23,7 @@ N.B. Usar las variables __ASTROSCI__ y __DEGREE__.
 
 ### 2
 
-En la encuesta se pregunta a los entrevistados que identifiquen si, para algunos problemas, consideran que se está gastanto mucho, lo necesario o poco en ellos, queremos analizar si esta respuesta puede explicarse con algunas otras sobre demográficos, religión e inclinación oplítica.
+En la encuesta se pregunta a los entrevistados que identifiquen si, para algunos problemas, consideran que se está gastanto mucho, lo necesario o poco en ellos, queremos analizar si esta respuesta puede explicarse con algunas otras sobre demográficos, religión e inclinación política.
 
 Usando las variables __NATMASS__, __AGE__, __SEX__, __SEI__, __REGION__ y __POLVIEWS__ realice el siguiente análisis.
 
